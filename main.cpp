@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include "inverted_index.h"
+#include "thread_pool_lib/thread_pool.h"
 
 using std::ifstream;
 
