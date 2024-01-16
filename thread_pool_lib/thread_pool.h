@@ -47,7 +47,7 @@ using std::make_shared;
 using std::future_status;
 using std::any_cast;
 
-using write_lock = unique_lock<mutex>;
+using write_lock_m = unique_lock<mutex>;
 
 using task_id_t = unsigned int;
 using task_func_t = packaged_task<any()>;
@@ -76,12 +76,15 @@ public:
         auto task_wrapper = [task_func]() -> any {
             return task_func();
         };
-        task_id_t task_id = tasks_num_;
+
+        task_id_t task_id;
         task_func_t task(task_wrapper);
         future<any> future;
 
         {
-            write_lock lock(tasks_mutex_);
+            write_lock_m lock(tasks_mutex_);
+
+            task_id = tasks_num_;
 
             tasks_.emplace(task_id, std::move(task));
             future = tasks_.back().second.get_future();
@@ -89,7 +92,7 @@ public:
         }
 
         {
-            write_lock lock(tasks_futures_mutex_);
+            write_lock_m lock(tasks_futures_mutex_);
 
             tasks_futures_[task_id] = std::move(future);
         }
@@ -123,7 +126,7 @@ private:
 
     atomic_bool is_shutdown_ = false;
     atomic_bool is_adding_task_blocked_ = false;
-    atomic_uint tasks_num_ = 0;
+    unsigned int tasks_num_ = 0;
 
     void run();
 };
