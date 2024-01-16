@@ -1,9 +1,7 @@
 #include "document_parser.h"
 #include <fstream>
-#include <sstream>
 #include <iostream>
 #include <stdexcept>
-#include <cstdlib>
 
 using std::ifstream;
 using std::stringstream;
@@ -12,7 +10,6 @@ using std::towlower;
 using std::cerr;
 using std::endl;
 using std::runtime_error;
-using std::locale;
 using std::mbstowcs;
 using std::basic_string;
 
@@ -36,26 +33,11 @@ words document_parser::parse_document(const document_path &path) {
 
         buffer << file.rdbuf();
 
+        file.close();
+
         wstring content = string_to_wstring(buffer.str());
 
-        words result;
-        wstring word;
-
-        for (auto& it : content) {
-            if (iswalpha(it)) {
-                word += towlower(it);
-
-                continue;
-            }
-
-            if (!word.empty()) {
-                stem_word(word);
-                result.push_back(word);
-                word.clear();
-            }
-        }
-
-        return result;
+        return parse_words(content);
     } catch (runtime_error& e) {
         cerr << e.what() << endl;
 
@@ -77,4 +59,70 @@ basic_string<wchar_t> document_parser::string_to_wstring(const string &str) {
     mbstowcs(&wstrTo[0], str.c_str(), size_needed);
 
     return wstrTo;
+}
+
+bool document_parser::add_stop_words(const fs::path &path) {
+    try {
+        ifstream file(path);
+
+        if (!file.is_open()) {
+            throw runtime_error("Cannot open file" + path.string());
+        }
+
+        stringstream buffer;
+
+        buffer << file.rdbuf();
+
+        file.close();
+
+        wstring content = string_to_wstring(buffer.str());
+
+        wstring word;
+
+        for (auto& it : content) {
+            if (iswalpha(it)) {
+                word += towlower(it);
+
+                continue;
+            }
+
+            if (!word.empty()) {
+                stop_words_.insert(word);
+                word.clear();
+            }
+        }
+    } catch (runtime_error& e) {
+        cerr << e.what() << endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+words document_parser::parse_words(const wstring &content) {
+    words result;
+    wstring word;
+
+    for (auto& it : content) {
+        if (iswalpha(it)) {
+            word += towlower(it);
+
+            continue;
+        }
+
+        if (word.empty()) {
+            continue;
+        }
+
+        stem_word(word);
+
+        if (!stop_words_.contains(word)) {
+            result.insert(word);
+        }
+
+        word.clear();
+    }
+
+    return result;
 }
