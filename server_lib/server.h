@@ -9,12 +9,13 @@
 #include <string>
 #include <filesystem>
 #include <vector>
+#include <chrono>
 
 namespace fs = std::filesystem;
+namespace ch = std::chrono;
 
 using std::string;
 using std::vector;
-using std::getline;
 
 class server {
 public:
@@ -25,7 +26,7 @@ public:
             processing_type& type
     );
     ~server();
-    void run(const fs::path& input_dir, const fs::path& output_file);
+    long int run(const fs::path& input_dir, const fs::path& output_file);
     void save_to_json(const fs::path& output_dir);
     [[nodiscard]] document read(const string& content) const;
 
@@ -38,7 +39,6 @@ private:
     void process_dir(const fs::path& input_dir);
 
     void parse_dir_task(const fs::path& input_dir);
-    void parse_file_task(const fs::path& input_file);
 
     void word_file_task(const fs::path &input_dir);
     void word_files_task(const vector<fs::path> &input_files);

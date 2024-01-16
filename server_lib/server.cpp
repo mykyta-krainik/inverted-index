@@ -1,13 +1,10 @@
 #include "server.h"
 #include <fstream>
-#include <chrono>
 #include <iostream>
 
 using std::ifstream;
 using std::cout;
 using std::endl;
-
-namespace ch = std::chrono;
 
 server::server(
         thread_pool *pool,
@@ -27,31 +24,22 @@ server::~server() {
     delete parser_;
 }
 
-void server::run(const fs::path &input_dir, const fs::path& output_file) {
+long int server::run(const fs::path &input_dir, const fs::path& output_file) {
     if (!fs::exists(input_dir)) {
         throw std::runtime_error("Input directory does not exist");
     }
 
     auto start = ch::high_resolution_clock::now();
 
-    pool_->add_task([this, input_dir] {
-        try {
-            process_dir(input_dir);
-        } catch (std::runtime_error& e) {
-            return false;
-        }
-
-        return true;
-    });
-
+    process_dir(input_dir);
     pool_->wait_all();
 
     auto end = ch::high_resolution_clock::now();
     auto duration = ch::duration_cast<ch::milliseconds>(end - start);
 
-    cout << "Time taken: " << duration.count() << " milliseconds" << endl;
-
     save_to_json(output_file);
+
+    return duration.count();
 }
 
 void server::process_dir(const fs::path &input_dir) {
@@ -59,15 +47,7 @@ void server::process_dir(const fs::path &input_dir) {
 
     for (const auto& entry : fs::directory_iterator(input_dir)) {
         if (fs::is_directory(entry)) {
-            pool_->add_task([this, entry] {
-                try {
-                    process_dir(entry);
-                } catch (std::runtime_error& e) {
-                    return false;
-                }
-
-                return true;
-            });
+            parse_dir_task(entry);
         } else if (fs::is_regular_file(entry)) {
             switch (type_) {
                 case WORD_FILE:
@@ -151,9 +131,14 @@ void server::index_task(const vector<fs::path> &input_files) {
 }
 
 void server::parse_dir_task(const fs::path &input_dir) {
+    pool_->add_task([this, input_dir] {
+        try {
+            process_dir(input_dir);
+        } catch (std::runtime_error& e) {
+            return false;
+        }
 
+        return true;
+    });
 }
 
-void server::parse_file_task(const fs::path &input_file) {
-
-}
