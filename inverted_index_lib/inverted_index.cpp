@@ -125,8 +125,10 @@ document inverted_index::read(const std::unordered_set<word>& words) const {
         read_lock index_read_lock(index_mutex_);
         for (const auto& w : words) {
             auto it = index_.find(w);
+
             if (it != index_.end()) {
                 read_lock word_lock(index_word_mutexes_.at(w));
+
                 for (const auto& doc : it->second) {
                     int count = ++doc_count[doc];
 
@@ -160,7 +162,9 @@ void inverted_index::add_documents_to_word(const word& word, const documents& do
 
         for (const auto& doc : docs) {
             index_[word].insert(doc);
+
             unique_lock documents_lock(documents_mutex_);
+
             documents_.insert(doc);
         }
     }

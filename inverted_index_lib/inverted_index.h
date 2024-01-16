@@ -36,7 +36,7 @@ public:
     void remove_document_from_all_records(const document& doc);
     void clear();
     void save_as_json(const string& file_path) const;
-    document read(const std::unordered_set<word>& words) const;
+    document read(const unordered_set<word>& words) const;
 
 private:
     inv_index index_;
@@ -51,4 +51,4 @@ private:
     void add_documents_to_word(const word& word, const documents& docs);
 };
 
-#endif // INVERTED_INDEX_H
+#endif
