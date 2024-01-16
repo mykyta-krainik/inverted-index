@@ -3,6 +3,15 @@ project(inverted_index_lib)
 
 set(CMAKE_CXX_STANDARD 23)
 
+add_executable(main main.cpp)
+
+target_link_libraries(main PUBLIC
+        inverted_index_lib
+        thread_pool_lib
+        document_parser_lib
+        server_lib
+)
+
 add_executable(inverted_index_run inverted_index_lib/inverted_index.cpp)
 include_directories(inverted_index_lib)
 add_subdirectory(inverted_index_lib)
