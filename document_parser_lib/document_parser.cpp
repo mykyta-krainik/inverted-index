@@ -11,7 +11,6 @@ using std::cerr;
 using std::endl;
 using std::runtime_error;
 using std::mbstowcs;
-using std::basic_string;
 
 document_parser::document_parser() {
     stem_english = new stemming::english_stem<>();
@@ -55,10 +54,11 @@ basic_string<wchar_t> document_parser::string_to_wstring(const string &str) {
     }
 
     size_t size_needed = mbstowcs(nullptr, str.c_str(), 0) + 1;
-    wstring wstrTo(size_needed, 0);
-    mbstowcs(&wstrTo[0], str.c_str(), size_needed);
+    wstring wstr_to(size_needed, 0);
 
-    return wstrTo;
+    mbstowcs(&wstr_to[0], str.c_str(), size_needed);
+
+    return wstr_to;
 }
 
 bool document_parser::add_stop_words(const fs::path &path) {

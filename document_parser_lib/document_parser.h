@@ -14,6 +14,7 @@ using std::unordered_set;
 
 using std::string;
 using std::wstring;
+using std::basic_string;
 
 using document_path = string;
 using words = unordered_set<wstring>;
@@ -27,7 +28,7 @@ public:
     words parse_document(const document_path& path);
     bool add_stop_words(const fs::path &path);
     words parse_words(const wstring& content);
-    static std::basic_string<wchar_t> string_to_wstring(const string& str);
+    static basic_string<wchar_t> string_to_wstring(const string& str);
 
 private:
     stemming::english_stem<>* stem_english;
