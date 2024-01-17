@@ -92,7 +92,7 @@ TEST_F(InvertedIndexTest, SaveAsJson) {
 
     index->add(test_word, test_doc);
 
-    string file_path = "{your path}";
+    string file_path = "/home/mykyta/uni/PC/inverted-index/data/test_index.json";
 
     index->save_as_json(file_path);
 
