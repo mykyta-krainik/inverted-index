@@ -11,6 +11,25 @@ You can find all of them in the corresponding directories.
 
 There are also unit tests for each of them in the `google_tests` directory.
 
+## Table of Contents
+
+- [Inverted index with parallel processing](#inverted-index-with-parallel-processing)
+  - [Table of Contents](#table-of-contents)
+  - [Tech Stack](#tech-stack)
+  - [Description](#description)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+  - [Building the Program](#building-the-program)
+  - [Running the Program](#running-the-program)
+
+## Tech Stack
+
+- **C++**: The main programming language used in this project
+- **CMake**: Build system used to compile the project
+- **CLang**: Compiler used for the project
+- **Google Test**: Unit testing framework used for the project
+- **Oleander Stemming Library**: Library used for stemming words, [link](https://github.com/Blake-Madden/OleanderStemmingLibrary)
+
 ## Prerequisites
 
 Before you begin, ensure you have met the following requirements:
