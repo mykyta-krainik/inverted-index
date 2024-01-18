@@ -29,6 +29,7 @@ There are also unit tests for each of them in the `google_tests` directory.
 - **CLang**: Compiler used for the project
 - **Google Test**: Unit testing framework used for the project
 - **Oleander Stemming Library**: Library used for stemming words, [link](https://github.com/Blake-Madden/OleanderStemmingLibrary)
+- **nlohmann/json**: Library used for parsing JSON files, [link](https://github.com/nlohmann/json)
 
 ## Prerequisites
 
