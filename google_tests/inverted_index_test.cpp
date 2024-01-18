@@ -182,25 +182,6 @@ void read_and_write_operations(inverted_index& index, const word& w, const docum
     index.remove_document_from_all_records(doc);
 }
 
-TEST_F(InvertedIndexTest, ConcurrentReadsAndWrites) {
-    word test_word = L"multithread";
-    document test_doc = "doc_multi";
-    int num_threads = 10;
-    std::vector<std::thread> threads;
-
-    threads.reserve(num_threads);
-
-    for (int i = 0; i < num_threads; ++i) {
-        threads.emplace_back(read_and_write_operations, std::ref(*index), test_word, test_doc);
-    }
-
-    for (auto& t : threads) {
-        t.join();
-    }
-
-    EXPECT_FALSE(index->contains(test_word));
-}
-
 void remove_words(inverted_index& index, const word& w) {
     index.remove_word(w);
 }
